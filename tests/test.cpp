@@ -20,19 +20,12 @@ TEST_CASE("toml", "[toml]")
 {
     SECTION("char")
     {
-        using streambuf_type = includize::toml_streambuf;
-        using ifstream_type = std::ifstream;
-        using istream_type = std::istream;
+        using preprocessor_type = includize::toml_preprocessor;
         
-        ifstream_type raw_infile("tests/base.toml", std::ios::in | std::ios::binary);
-        streambuf_type streambuf = streambuf_type(raw_infile, "tests/");
-        
-        REQUIRE(raw_infile.is_open());
-        
-        istream_type infile(&streambuf);
+        preprocessor_type pp("tests/base.toml");
         std::ifstream orig_infile("tests/orig.toml");
         
-        cpptoml::parser included_parser(infile);
+        cpptoml::parser included_parser(pp.stream());
         cpptoml::parser orig_parser(orig_infile);
         
         std::shared_ptr< cpptoml::table > parsed = included_parser.parse();
@@ -44,32 +37,23 @@ TEST_CASE("toml", "[toml]")
         std::ostringstream without_includes;
         without_includes << (*orig);
         
+        REQUIRE(without_includes.str() != "");
         REQUIRE(with_includes.str() == without_includes.str());
     }
     
     SECTION("wchar_t")
     {
-        using streambuf_type = includize::wtoml_streambuf;
-        using ifstream_type = std::wifstream;
-        using istream_type = std::wistream;
+        using preprocessor_type = includize::wtoml_preprocessor;
         
-        ifstream_type raw_infile("tests/wbase.toml", std::ios::in | std::ios::binary);
-        raw_infile.imbue(std::locale(raw_infile.getloc(),
-            new std::codecvt_utf16<wchar_t, 0x10ffff, std::consume_header>));
-        
-        REQUIRE(raw_infile.is_open());
-        
-        streambuf_type streambuf = streambuf_type(raw_infile, "tests/");
-        
-        istream_type infile(&streambuf);
+        preprocessor_type pp("tests/wbase.toml");
         std::ifstream orig_infile("tests/orig.toml");
         
         std::ostringstream converted;
         
-        while (infile)
+        while (pp.stream())
         {
             std::wstring line;
-            std::getline(infile, line);
+            std::getline(pp.stream(), line);
             converted << convert(line) << std::endl;
         }
         
@@ -87,6 +71,7 @@ TEST_CASE("toml", "[toml]")
         std::ostringstream without_includes;
         without_includes << (*orig);
         
+        REQUIRE(without_includes.str() != "");
         REQUIRE(with_includes.str() == without_includes.str());
     }
 }

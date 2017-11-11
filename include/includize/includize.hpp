@@ -7,6 +7,8 @@
 #include <regex>
 #include <cassert>
 #include <codecvt>
+#include <memory>
+#include <unistd.h>
 
 namespace includize
 {
@@ -348,6 +350,85 @@ using streambuf = basic_streambuf< INCLUDE_SPEC, char >;
 
 template< typename INCLUDE_SPEC >
 using wstreambuf = basic_streambuf< INCLUDE_SPEC, wchar_t >;
+
+template< typename INCLUDE_SPEC, typename CHAR_T, typename TRAITS = std::char_traits< CHAR_T > >
+class basic_preprocessor
+{
+public:
+    using include_spec_type = INCLUDE_SPEC;
+    using char_type = CHAR_T;
+    using traits_type = TRAITS;
+    
+    using istream_type = typename std::basic_istream< char_type, traits_type >;
+    using ifstream_type = typename std::basic_ifstream< char_type, traits_type >;
+    using streambuf_type = basic_streambuf< include_spec_type, char_type, traits_type >;
+    
+public:
+    basic_preprocessor(const std::string &file_name)
+    {
+        std::string path = "";
+        
+        if (file_name[0] != '/')
+        {
+            char buf[8192];
+            if (getcwd(buf, 8192))
+            {
+                std::string path = buf;
+                
+                if (*path.rbegin() != '/')
+                {
+                    path += '/';
+                }
+                
+                path += extract_path(file_name);
+                
+                fstream_.reset(new ifstream_type(file_name.c_str(),
+                    std::ios::in | std::ios::binary));
+                prepare_ifstream(*fstream_);
+                streambuf_.reset(new streambuf_type(*fstream_, path));
+                stream_.reset(new istream_type(streambuf_.get()));
+            }
+        }
+    }
+    
+    istream_type &stream() { return *stream_; }
+    
+private:
+    
+    static std::string extract_path(const std::string file_name)
+    {
+        std::string::size_type pos = file_name.rfind("/");
+        std::string path = (pos != std::string::npos) ?
+            file_name.substr(0, pos + 1) : "";
+            
+        return path;
+    }
+    
+    template< typename T, typename TTRAITS >
+    static typename std::enable_if< sizeof(char) != sizeof(T), void >::type
+    prepare_ifstream(std::basic_ifstream< T, TTRAITS > &s)
+    {
+        s.imbue(std::locale(s.getloc(),
+            new std::codecvt_utf16< wchar_t, 0x10ffff, std::consume_header >));
+    }
+    
+    template< typename T, typename TTRAITS >
+    static typename std::enable_if< sizeof(char) == sizeof(T), void >::type
+    prepare_ifstream(std::basic_ifstream< T, TTRAITS > &s)
+    {
+    }
+    
+    std::unique_ptr< istream_type > stream_;
+    std::unique_ptr< ifstream_type > fstream_;
+    std::unique_ptr< streambuf_type > streambuf_;
+};
+
+template< typename INCLUDE_SPEC >
+using preprocessor = basic_preprocessor< INCLUDE_SPEC, char >;
+
+template< typename INCLUDE_SPEC >
+using wpreprocessor = basic_preprocessor< INCLUDE_SPEC, wchar_t >;
+
 }
 
 #endif

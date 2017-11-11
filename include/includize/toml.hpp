@@ -43,6 +43,12 @@ using basic_toml_streambuf = basic_streambuf< toml_spec< CHAR_T >, CHAR_T, TRAIT
 
 using toml_streambuf = basic_toml_streambuf< char >;
 using wtoml_streambuf = basic_toml_streambuf< wchar_t >;
+
+template< typename CHAR_T, typename TRAITS = std::char_traits< CHAR_T > >
+using basic_toml_preprocessor = basic_preprocessor< toml_spec< CHAR_T >, CHAR_T, TRAITS >;
+
+using toml_preprocessor = basic_toml_preprocessor< char >;
+using wtoml_preprocessor = basic_toml_preprocessor< wchar_t >;
     
 } // namespace includize
 
