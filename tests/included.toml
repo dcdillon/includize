@@ -1,0 +1,6 @@
+# Nested tables are denoted by table names with dots in them. Name your tables
+# whatever crap you please, just don't use #, ., [ or ].
+
+[table.subtable]
+
+key = "another value"
