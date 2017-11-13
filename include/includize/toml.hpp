@@ -23,6 +23,11 @@ struct toml_spec< char >
     
     static constexpr std::size_t file_name_index() { return 1; };
     static constexpr bool discard_characters_after_include() { return true; }
+    
+    static std::string unescape_filename(const std::string &str)
+    {
+        return std::regex_replace(str, std::regex("\\\\\""), "\"");
+    }
 };
 
 template<>
@@ -36,6 +41,11 @@ struct toml_spec< wchar_t >
     
     static constexpr std::size_t file_name_index() { return 1; };
     static constexpr bool discard_characters_after_include() { return true; }
+    
+    static std::string unescape_filename(const std::string &str)
+    {
+        return std::regex_replace(str, std::regex("\\\\\""), "\"");
+    }
 };
 
 template< typename CHAR_T, typename TRAITS = std::char_traits< CHAR_T > >

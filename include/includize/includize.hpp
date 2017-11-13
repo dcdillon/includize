@@ -295,15 +295,16 @@ private:
     typename std::enable_if< sizeof(char) != sizeof(T), std::string >::type
     convert_file_name(const std::basic_string< T, TTRAITS > &file_name)
     {
-        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t> converter;
-        return converter.to_bytes(file_name);
+        std::wstring_convert< std::codecvt_utf8_utf16< wchar_t >, wchar_t >
+            converter;
+        return INCLUDE_SPEC::unescape_filename(converter.to_bytes(file_name));
     }
     
     template< typename T, typename TTRAITS >
     typename std::enable_if< sizeof(char) == sizeof(T), std::string >::type
     convert_file_name(const std::basic_string< T, TTRAITS > &file_name)
     {
-        return file_name;
+        return INCLUDE_SPEC::unescape_filename(file_name);
     }
     
     std::string get_file_path(const std::string file_name)
