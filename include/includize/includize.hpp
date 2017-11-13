@@ -16,6 +16,7 @@ template< typename INCLUDE_SPEC, typename CHAR_T, typename TRAITS = std::char_tr
 class basic_streambuf : public std::basic_streambuf< CHAR_T, TRAITS >
 {
 public:
+    using include_spec_type = INCLUDE_SPEC;
     using base_type = typename std::basic_streambuf< CHAR_T, TRAITS >;
     using char_type = typename base_type::char_type;
     using traits_type = typename base_type::traits_type;
@@ -233,7 +234,7 @@ private:
     
     bool check_for_include(int_type c)
     {
-        if (c == INCLUDE_SPEC::header_start())
+        if (c == include_spec_type::header_start())
         {
             string_type line;
             
@@ -261,9 +262,9 @@ private:
             
             regex_match_type match;
             
-            if (std::regex_search(line, match, regex_type(INCLUDE_SPEC::regex())))
+            if (std::regex_search(line, match, regex_type(include_spec_type::regex())))
             {
-                string_type file_name = match[INCLUDE_SPEC::file_name_index()];
+                string_type file_name = match[include_spec_type::file_name_index()];
                 
                 if (pos != string_type::npos && pos < buffer_.size())
                 {
@@ -274,7 +275,7 @@ private:
                     buffer_.clear();
                 }
                 
-                if (!INCLUDE_SPEC::discard_characters_after_include())
+                if (!include_spec_type::discard_characters_after_include())
                 {
                     buffer_ += match.suffix();
                 }
@@ -297,14 +298,14 @@ private:
     {
         std::wstring_convert< std::codecvt_utf8_utf16< wchar_t >, wchar_t >
             converter;
-        return INCLUDE_SPEC::unescape_filename(converter.to_bytes(file_name));
+        return include_spec_type::unescape_filename(converter.to_bytes(file_name));
     }
     
     template< typename T, typename TTRAITS >
     typename std::enable_if< sizeof(char) == sizeof(T), std::string >::type
     convert_file_name(const std::basic_string< T, TTRAITS > &file_name)
     {
-        return INCLUDE_SPEC::unescape_filename(file_name);
+        return include_spec_type::unescape_filename(file_name);
     }
     
     std::string get_file_path(const std::string file_name)
