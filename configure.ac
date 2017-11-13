@@ -20,4 +20,6 @@ AC_TYPE_SIZE_T
 
 # Checks for library functions.
 
+CXXFLAGS="-std=c++11 $CXXFLAGS -Wall -Werror -pedantic"
+
 AC_OUTPUT

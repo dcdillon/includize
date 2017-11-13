@@ -219,7 +219,7 @@ private:
             {
                 break;
             }
-            else if (c != endl< char_type >(c))
+            else if (static_cast< char_type >(c) != stream_.widen('\n'))
             {
                 buffer_.push_back(c);
             }
@@ -241,7 +241,7 @@ private:
             
             if (!buffer_.empty())
             {
-                pos = buffer_.find(endl< char_type >(char_type()));
+                pos = buffer_.find(stream_.widen('\n'));
                 
                 if (pos != string_type::npos)
                 {
@@ -319,21 +319,7 @@ private:
         
         return "";
     }
-    
-    template< typename T >
-    static constexpr
-    typename std::enable_if< sizeof(char) == sizeof(T), char >::type endl(const T &)
-    {
-        return '\n';
-    }
-    
-    template< typename T >
-    static constexpr
-    typename std::enable_if< sizeof(char) != sizeof(T), wchar_t >::type endl(const T &)
-    {
-        return L'\n';
-    }
-    
+        
 private:
     
     istream_type &stream_;
@@ -392,6 +378,8 @@ public:
     }
     
     istream_type &stream() { return *stream_; }
+    
+    operator istream_type &() { return *stream_; }
     
 private:
     

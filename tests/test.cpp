@@ -12,7 +12,8 @@
 
 std::string convert(const std::wstring &str)
 {
-    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t> converter;
+    std::wstring_convert< std::codecvt_utf8_utf16< wchar_t >, wchar_t >
+        converter;
     return converter.to_bytes(str);
 }
 
@@ -25,7 +26,7 @@ TEST_CASE("toml", "[toml]")
         preprocessor_type pp("tests/base.toml");
         std::ifstream orig_infile("tests/orig.toml");
         
-        cpptoml::parser included_parser(pp.stream());
+        cpptoml::parser included_parser(pp);
         cpptoml::parser orig_parser(orig_infile);
         
         std::shared_ptr< cpptoml::table > parsed = included_parser.parse();
@@ -53,7 +54,11 @@ TEST_CASE("toml", "[toml]")
         while (pp.stream())
         {
             std::wstring line;
-            std::getline(pp.stream(), line);
+            std::getline<
+                std::wstring::value_type,
+                std::wstring::traits_type,
+                std::wstring::allocator_type
+            >(pp, line);
             converted << convert(line) << std::endl;
         }
         
