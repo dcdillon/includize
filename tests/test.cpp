@@ -42,6 +42,7 @@ TEST_CASE("toml", "[toml]")
         REQUIRE(with_includes.str() == without_includes.str());
     }
     
+#if !defined(INCLUDIZE_NO_CODECVT)
     SECTION("wchar_t")
     {
         using preprocessor_type = includize::wtoml_preprocessor;
@@ -79,4 +80,6 @@ TEST_CASE("toml", "[toml]")
         REQUIRE(without_includes.str() != "");
         REQUIRE(with_includes.str() == without_includes.str());
     }
+#endif
+
 }

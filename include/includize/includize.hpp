@@ -6,9 +6,14 @@
 #include <string>
 #include <regex>
 #include <cassert>
-#include <codecvt>
 #include <memory>
 #include <unistd.h>
+
+#if !defined(INCLUDIZE_NO_CODECVT)
+
+#include <codecvt>
+
+#endif
 
 namespace includize
 {
@@ -292,6 +297,8 @@ private:
         s.imbue(stream_.getloc());
     }
     
+#if !defined(INCLUDIZE_NO_CODECVT)
+
     template< typename T, typename TTRAITS >
     typename std::enable_if< sizeof(char) != sizeof(T), std::string >::type
     convert_file_name(const std::basic_string< T, TTRAITS > &file_name)
@@ -300,6 +307,8 @@ private:
             converter;
         return include_spec_type::unescape_filename(converter.to_bytes(file_name));
     }
+    
+#endif
     
     template< typename T, typename TTRAITS >
     typename std::enable_if< sizeof(char) == sizeof(T), std::string >::type
@@ -336,8 +345,12 @@ private:
 template< typename INCLUDE_SPEC >
 using streambuf = basic_streambuf< INCLUDE_SPEC, char >;
 
+#if !defined(INCLUDIZE_NO_CODECVT)
+
 template< typename INCLUDE_SPEC >
 using wstreambuf = basic_streambuf< INCLUDE_SPEC, wchar_t >;
+
+#endif
 
 template< typename INCLUDE_SPEC, typename CHAR_T, typename TRAITS = std::char_traits< CHAR_T > >
 class basic_preprocessor
@@ -355,28 +368,28 @@ public:
     basic_preprocessor(const std::string &file_name)
     {
         std::string path = "";
-        
+       
         if (file_name[0] != '/')
         {
             char buf[8192];
             if (getcwd(buf, 8192))
             {
                 std::string path = buf;
-                
+            
                 if (*path.rbegin() != '/')
                 {
                     path += '/';
                 }
-                
-                path += extract_path(file_name);
-                
-                fstream_.reset(new ifstream_type(file_name.c_str(),
-                    std::ios::in | std::ios::binary));
-                prepare_ifstream(*fstream_);
-                streambuf_.reset(new streambuf_type(*fstream_, path));
-                stream_.reset(new istream_type(streambuf_.get()));
             }
         }
+                
+        path += extract_path(file_name);
+                
+        fstream_.reset(new ifstream_type(file_name.c_str(),
+            std::ios::in | std::ios::binary));
+        prepare_ifstream(*fstream_);
+        streambuf_.reset(new streambuf_type(*fstream_, path));
+        stream_.reset(new istream_type(streambuf_.get()));
     }
     
     istream_type &stream() { return *stream_; }
@@ -394,6 +407,8 @@ private:
         return path;
     }
     
+#if !defined(INCLUDIZE_NO_CODECVT)
+
     template< typename T, typename TTRAITS >
     static typename std::enable_if< sizeof(char) != sizeof(T), void >::type
     prepare_ifstream(std::basic_ifstream< T, TTRAITS > &s)
@@ -401,7 +416,9 @@ private:
         s.imbue(std::locale(s.getloc(),
             new std::codecvt_utf16< wchar_t, 0x10ffff, std::consume_header >));
     }
-    
+
+#endif
+
     template< typename T, typename TTRAITS >
     static typename std::enable_if< sizeof(char) == sizeof(T), void >::type
     prepare_ifstream(std::basic_ifstream< T, TTRAITS > &s)
@@ -416,8 +433,12 @@ private:
 template< typename INCLUDE_SPEC >
 using preprocessor = basic_preprocessor< INCLUDE_SPEC, char >;
 
+#if !defined(INCLUDIZE_NO_CODECVT)
+
 template< typename INCLUDE_SPEC >
 using wpreprocessor = basic_preprocessor< INCLUDE_SPEC, wchar_t >;
+
+#endif
 
 }
 
