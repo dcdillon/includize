@@ -8,7 +8,7 @@ jobs:
       - checkout
       - run:
           name: Install Development Tools and Dependcies
-          command: apt-get update && apt-get install -y g++ clang make autoconf automake
+          command: apt-get update && apt-get install -y g++ clang make autoconf automake autoconf-archive
       - run:
           name: Build with g++
           command: ./bootstrap.sh && ./configure && make && make check
@@ -16,5 +16,17 @@ jobs:
           name: Cleanup
           command: ./cleanup.sh
       - run:
+          name: Build with g++ and no codecvt
+          command: ./bootstrap.sh && ./configure --without-codecvt && make && make check
+      - run:
+          name: Cleanup
+          command: ./cleanup.sh
+      - run:
           name: Build with clang++
           command: ./bootstrap.sh && CXX=clang++ ./configure && make && make check
+      - run:
+          name: Cleanup
+          command: ./cleanup.sh
+      - run:
+          name: Build with clang++ and no codecvt
+          command: ./bootstrap.sh && CXX=clang++ ./configure --without-codecvt && make && make check
