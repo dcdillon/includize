@@ -6,7 +6,6 @@ pushd $DIR > /dev/null 2>&1
 
 aclocal
 autoconf
-autoheader
 automake --add-missing
 
 popd > /dev/null 2>&1

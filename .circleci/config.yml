@@ -4,6 +4,9 @@ jobs:
     docker:
       - image: debian:stretch
 
+    environment:
+      - CXXFLAGS: "-Wall -Werror -pedantic"
+
     steps:
       - checkout
       - run:
