@@ -74,6 +74,6 @@ private:
     std::unique_ptr< ifstream_type > fstream_;
     std::unique_ptr< streambuf_type > streambuf_;
 };
-};
+}
 
 #endif
