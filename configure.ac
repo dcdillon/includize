@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT(includize, 0.0.1, dcdillon@gmail.com)
+AC_INIT(includize, 0.0.2, dcdillon@gmail.com)
 AM_INIT_AUTOMAKE
 
 # Checks for programs.
@@ -23,9 +23,5 @@ AX_CXX_COMPILE_STDCXX(11, ext, mandatory)
 AC_CONFIG_FILES([Makefile
                  include/Makefile
                  tests/Makefile])
-
-AC_ARG_WITH([codecvt], AS_HELP_STRING([--without-codecvt],
-            [Use disable codecvt]),
-            AC_DEFINE([INCLUDIZE_NO_CODECVT], [], [Description]))
 
 AC_OUTPUT

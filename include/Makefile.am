@@ -1,1 +1,1 @@
-nobase_include_HEADERS = includize/*.hpp
+nobase_include_HEADERS = includize/*.hpp includize/multibyte/*.hpp

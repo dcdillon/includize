@@ -19,17 +19,5 @@ jobs:
           name: Cleanup
           command: ./cleanup.sh
       - run:
-          name: Build with g++ and no codecvt
-          command: ./bootstrap.sh && ./configure --without-codecvt && make && make check
-      - run:
-          name: Cleanup
-          command: ./cleanup.sh
-      - run:
           name: Build with clang++
           command: ./bootstrap.sh && CXX=clang++ ./configure && make && make check
-      - run:
-          name: Cleanup
-          command: ./cleanup.sh
-      - run:
-          name: Build with clang++ and no codecvt
-          command: ./bootstrap.sh && CXX=clang++ ./configure --without-codecvt && make && make check
