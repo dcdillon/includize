@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
 }
 ```
 
-For completeness, here is some example input and output.
+For completeness, here is some example input and output adapted from the example files at the [TOML](https://github.com/toml-lang/toml) repo.
 
 **base.toml**
 ```toml
