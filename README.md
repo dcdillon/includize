@@ -10,7 +10,7 @@ Some languages do not come with their own include directives (markdown, yaml, js
 
 ### Example
 
-The (TOML)[https://github.com/toml-lang/toml] language has no include directive, and, in fact, has indicated that providing one would go against the "M" in TOML (Minimal).  This does not mean that such a directive would be useless in practice.  So we define an `IncludeSpec` which is more or less a concept as follows:
+The [TOML](https://github.com/toml-lang/toml) language has no include directive, and, in fact, has indicated that providing one would go against the "M" in TOML (Minimal).  This does not mean that such a directive would be useless in practice.  So we define an `IncludeSpec` which is more or less a concept as follows:
 
 ```c++
 struct toml_spec_char
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 {
     using preprocessor_type = includize::preprocessor< toml_spec_char >;
 
-    preprocessor_type pp("somefile.toml")
+    preprocessor_type pp("base.toml")
 
     while (pp.stream())
     {
