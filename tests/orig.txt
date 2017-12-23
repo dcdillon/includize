@@ -1,0 +1,7 @@
+This is an arbitrary file in which I'd like to include some text from other
+files.  Particularly I'd like to include:
+
+This wonderful included text that I want to store in one place an use in many
+different files.
+
+This way I can easily include some boilerplate text into any file!
