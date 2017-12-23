@@ -1,4 +1,4 @@
-# includize - C++ Stream for Preprocessing Include Directives
+# includize - C++ Stream for Preprocessing Include Directives [![CircleCI](https://circleci.com/gh/dcdillon/includize.svg?style=shield)](https://circleci.com/gh/dcdillon/includize)
 
 ### Short Description
 
