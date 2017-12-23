@@ -8,7 +8,7 @@ Some languages do not come with their own include directives (markdown, yaml, js
 
 `includize` allows a user to define a fairly simple specification for an include directive using regular expressions and have it then simply apply to a C++ `std::istream` (usually a `std::ifstream` as there needs to be some sort of anchor for include paths).  Once specified, an `includize::preprocessor` can be instantiated which will simply include the appropriate text as it is read.
 
-### Example - Unversal
+### Example - Universal
 
 `includize` defines a universal include directive that we can use if we so choose.
 
