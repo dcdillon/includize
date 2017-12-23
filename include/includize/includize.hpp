@@ -3,6 +3,7 @@
 
 #include "preprocessor.hpp"
 #include "streambuf.hpp"
+#include "universal.hpp"
 
 namespace includize
 {

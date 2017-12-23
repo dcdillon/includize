@@ -3,8 +3,10 @@
 #include "catch.hpp"
 #include "cpptoml.h"
 
+#include "../include/includize/includize.hpp"
 #include "../include/includize/multibyte/wstream_preparer.hpp"
 #include "../include/includize/multibyte/wtoml.hpp"
+#include "../include/includize/multibyte/wuniversal.hpp"
 
 #include <codecvt>
 #include <fstream>
@@ -78,6 +80,80 @@ TEST_CASE("toml", "[toml]")
 
         std::ostringstream without_includes;
         without_includes << (*orig);
+
+        REQUIRE(without_includes.str() != "");
+        REQUIRE(with_includes.str() == without_includes.str());
+    }
+}
+
+TEST_CASE("universal", "[universal]")
+{
+    SECTION("char")
+    {
+        using preprocessor_type = includize::universal_preprocessor;
+
+        preprocessor_type pp("tests/base.txt");
+        std::ifstream orig("tests/orig.txt");
+
+        std::ostringstream with_includes;
+
+        while (pp.stream())
+        {
+            std::string line;
+            std::getline(pp.stream(), line);
+            with_includes << line << std::endl;
+            std::cout << line << std::endl;
+        }
+
+        std::cout << std::endl;
+
+        std::ostringstream without_includes;
+
+        while (orig.good())
+        {
+            std::string line;
+            std::getline(orig, line);
+            without_includes << line << std::endl;
+            std::cout << line << std::endl;
+        }
+
+        REQUIRE(without_includes.str() != "");
+        REQUIRE(with_includes.str() == without_includes.str());
+    }
+
+    SECTION("wchar_t")
+    {
+        using preprocessor_type = includize::basic_preprocessor<
+            includize::universal_spec< wchar_t >,
+            wchar_t,
+            std::char_traits< wchar_t >,
+            includize::wstream_utf16_header_preparer >;
+
+        preprocessor_type pp("tests/wbase.txt");
+        std::ifstream orig("tests/orig.txt");
+
+        std::ostringstream with_includes;
+
+        while (pp.stream())
+        {
+            std::wstring line;
+            std::getline< std::wstring::value_type,
+                          std::wstring::traits_type,
+                          std::wstring::allocator_type >(pp, line);
+            with_includes << convert(line) << std::endl;
+        }
+
+        std::cout << std::endl;
+
+        std::ostringstream without_includes;
+
+        while (orig.good())
+        {
+            std::string line;
+            std::getline(orig, line);
+            without_includes << line << std::endl;
+            std::cout << line << std::endl;
+        }
 
         REQUIRE(without_includes.str() != "");
         REQUIRE(with_includes.str() == without_includes.str());
