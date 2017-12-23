@@ -46,7 +46,10 @@ template < typename CHAR_T,
            typename TRAITS = std::char_traits< CHAR_T >,
            typename STREAM_PREPARER = null_stream_preparer< CHAR_T, TRAITS > >
 using basic_universal_preprocessor =
-    basic_preprocessor< universal_spec< CHAR_T >, CHAR_T, TRAITS, STREAM_PREPARER >;
+    basic_preprocessor< universal_spec< CHAR_T >,
+                        CHAR_T,
+                        TRAITS,
+                        STREAM_PREPARER >;
 
 using universal_preprocessor = basic_universal_preprocessor< char >;
 
