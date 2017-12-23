@@ -8,7 +8,64 @@ Some languages do not come with their own include directives (markdown, yaml, js
 
 `includize` allows a user to define a fairly simple specification for an include directive using regular expressions and have it then simply apply to a C++ `std::istream` (usually a `std::ifstream` as there needs to be some sort of anchor for include paths).  Once specified, an `includize::preprocessor` can be instantiated which will simply include the appropriate text as it is read.
 
-### Example
+### Example - Unversal
+
+`includize` defines a universal include directive that we can use if we so choose.
+
+```c++
+#include <includize/includize.hpp>
+#include <iostream>
+
+int main(int argc, char *argv[])
+{
+    using preprocessor_type = includize::universal_preprocessor;
+
+    preprocessor_type pp("base.txt")
+
+    while (pp.stream())
+    {
+        std::string line;
+        std::getline(pp, line);
+        std::cout << line << std::endl;
+    }
+
+    return 0;
+}
+```
+
+Which will process the following file as indicated:
+
+**base.txt**
+```
+This is an arbitrary file in which I'd like to include some text from other
+files.  Particularly I'd like to include:
+
+[[ #includize "included.txt" ]]
+
+This way I can easily include some boilerplate text into any file!
+```
+
+**included.txt**
+```
+This wonderful included text that I want to store in one place an use in many
+different files.
+```
+
+**generated output**
+```
+This is an arbitrary file in which I'd like to include some text from other
+files.  Particularly I'd like to include:
+
+This wonderful included text that I want to store in one place an use in many
+different files.
+
+This way I can easily include some boilerplate text into any file!
+
+```
+
+### Example - Custom
+
+In some cases, the universal solution will not be quite what we want.  In this case, we can create our own custom include directive.
 
 The [TOML](https://github.com/toml-lang/toml) language has no include directive, and, in fact, has indicated that providing one would go against the "M" in TOML (Minimal).  This does not mean that such a directive would be useless in practice.  So we define an `IncludeSpec` which is more or less a concept as follows:
 
